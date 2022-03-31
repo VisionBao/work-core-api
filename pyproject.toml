@@ -8,6 +8,9 @@ authors = ["VisionBao <vision8888888@gmail.com>"]
 python = "^3.10"
 fastapi = "^0.75.0"
 uvicorn = "^0.17.6"
+pydantic = "^1.9.0"
+SQLAlchemy = "^1.4.32"
+PyMySQL = "^1.0.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
