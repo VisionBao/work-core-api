@@ -6,8 +6,6 @@ class KeyBase(BaseModel):
     key: str
     project_id: Optional[int] = None
     page_id: Optional[int] = None
-    lang_id: int
-    value: str
 
 
 class KeyCreate(KeyBase):

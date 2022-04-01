@@ -3,7 +3,6 @@ from typing import Optional
 
 
 class LanguageBase(BaseModel):
-    id: int
     lang_code: str
     en_des: str
     cn_des: str
@@ -14,7 +13,7 @@ class LanguageCreate(LanguageBase):
 
 
 class Language(LanguageBase):
+    id: int
 
     class Config:
         orm_mode = True
-

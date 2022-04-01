@@ -3,7 +3,6 @@ from typing import Optional
 
 
 class ProjectBase(BaseModel):
-
     symbol: str
     name: str
     langs: str
@@ -19,4 +18,3 @@ class Project(ProjectBase):
 
     class Config:
         orm_mode = True
-

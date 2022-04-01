@@ -8,5 +8,3 @@ class Key(Base):
     key = Column(String(255), primary_key=True)
     project_id = Column(Integer)
     page_id = Column(Integer)
-    lang_id = Column(Integer, nullable=False)
-    value = Column(String(255), nullable=False)
