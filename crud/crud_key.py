@@ -4,11 +4,11 @@ import models
 import schemas
 
 
-def get_keys_by_project_id(db: Session, project_id: str):
+def get_keys_by_project_id(db: Session, project_id: int):
     return db.query(models.Key).filter(models.Key.project_id == project_id).all()
 
 
-def get_keys_by_page_id(db: Session, page_id: str):
+def get_keys_by_page_id(db: Session, page_id: int):
     return db.query(models.Key).filter(models.Key.page_id == page_id).all()
 
 
