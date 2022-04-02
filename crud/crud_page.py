@@ -19,7 +19,7 @@ def delete_page(db: Session, page_id: int):
 
 
 def create_page(db: Session, page: schemas.PageCreate):
-    db_page = models.Project(**page.dict())
+    db_page = models.Page(**page.dict())
     db.add(db_page)
     db.commit()
     db.refresh(db_page)

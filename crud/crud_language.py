@@ -4,4 +4,4 @@ import models
 
 
 def get_languages(db: Session):
-    return db.query(models.Project).all()
+    return db.query(models.Language).all()

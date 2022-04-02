@@ -1,4 +1,3 @@
-
 from sqlalchemy import Boolean, Column, Integer, String
 from db.database import Base
 
@@ -9,5 +8,6 @@ class Project(Base):
     symbol = Column(String(255), nullable=False)
     name = Column(String(255), nullable=False)
     access = Column(String(255))
+    lang_default = Column(Integer, nullable=False)
     langs = Column(String(255))
     content = Column(String(255))

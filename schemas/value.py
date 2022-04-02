@@ -4,7 +4,7 @@ from typing import Optional
 
 class ValueBase(BaseModel):
     key: str
-    lang_id: str
+    lang_id: int
     value: str
 
 
