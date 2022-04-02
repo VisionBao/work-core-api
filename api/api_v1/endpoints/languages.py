@@ -16,16 +16,9 @@ def get_languages(db: Session = Depends(get_db)):
 
 @router.get('/language', response_model=schemas.Language)
 def get_languages(lang_id: int = None, lang_code: str = None, db: Session = Depends(get_db)):
-    db_language = None
-    if lang_id:
-        db_language = crud.get_language_by_id(db, lang_id)
-
-    if lang_code:
-        db_language = crud.get_language_by_code(db, lang_code)
+    db_language = crud.get_language(db, lang_id, lang_code)
 
     if db_language is None:
         raise HTTPException(status_code=404, detail="error")
     else:
         return db_language
-
-
