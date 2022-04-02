@@ -22,3 +22,9 @@ def create_project(db: Session, project: schemas.ProjectCreate):
     db.commit()
     db.refresh(db_project)
     return db_project
+
+
+def delete_project(db: Session, project_id: str):
+    db_status = db.query(models.Project).filter(models.Project.id == project_id).delete()
+    db.commit()
+    return db_status
