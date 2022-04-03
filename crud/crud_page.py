@@ -24,3 +24,9 @@ def create_page(db: Session, page: schemas.PageCreate):
     db.commit()
     db.refresh(db_page)
     return db_page
+
+
+def update_page(db: Session, page: schemas.Page):
+    db_status = db.query(models.Page).filter(models.Page.id == page.id).update(page.dict())
+    db.commit()
+    return db_status
