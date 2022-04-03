@@ -1,3 +1,5 @@
+import json
+
 from sqlalchemy.orm import Session
 
 import models
@@ -15,9 +17,9 @@ def create_value(db: Session, project: schemas.ValueCreate):
 def create_values(db: Session, value_list: list[schemas.ValueCreate]):
     db_value_list = []
     for value in value_list:
-        db_value = models.Project(**value.dict())
+        db_value = models.Value(**value.dict())
         db_value_list.append(db_value)
-    db.bulk_insert_mappings(db_value_list)
+    db.bulk_save_objects(db_value_list)
     db.commit()
     return db_value_list
 
@@ -39,14 +41,14 @@ def delete_value_by_key(db: Session, key: str):
 
 
 def get_value(db: Session, key: str, lang_id: int):
-    return db.query(models.Value).filter(models.Value.key == key and models.Value.lang_id == lang_id).first()
+    return db.query(models.Value).filter(models.Value.key == key).filter(models.Value.lang_id == lang_id).first()
 
 
 def update_values(db: Session, value_list: list[schemas.Value]):
-    db_value_list = []
+    value_list_new = []
     for value in value_list:
-        db_value = models.Project(**value.dict())
-        db_value_list.append(db_value)
-    db.bulk_update_mappings(db_value_list)
-    db.commit()
-    return db_value_list
+        value_list_new.append(value.dict())
+    if len(value_list) > 0:
+        db.bulk_update_mappings(models.Value, value_list_new)
+        db.commit()
+    return value_list_new

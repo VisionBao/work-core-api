@@ -1,3 +1,4 @@
+import models
 from api.deps import get_db
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -16,7 +17,7 @@ def get_values_by_key(key: str, db: Session = Depends(get_db)):
     return crud.get_values_by_key(db, key)
 
 
-@router.get('/delete_value', response_model=schemas.Value)
+@router.post('/delete_value', response_model=schemas.Value)
 def get_values_by_key(key: str, db: Session = Depends(get_db)):
     db_key = crud.get_key(db, key)
     if db_key is None:
@@ -24,7 +25,7 @@ def get_values_by_key(key: str, db: Session = Depends(get_db)):
     return crud.get_values_by_key(db, key)
 
 
-@router.post('/add-values', response_model=list[schemas.Value])
+@router.post('/add-values')
 def create_values(values: list[schemas.ValueCreate], db: Session = Depends(get_db)):
     db_value_creat = []
     db_value_update = []
@@ -36,8 +37,12 @@ def create_values(values: list[schemas.ValueCreate], db: Session = Depends(get_d
     for value in values:
         db_value = crud.get_value(db, value.key, value.lang_id)
         if db_value is None:
-            db_value = db_value_creat.append(db_value)
+            db_value_creat.append(value)
         else:
-            db_value = db_value_update.append(db_value)
+            new_value = value.dict()
+            new_value['id'] = db_value.id
+            db_value_update.append(schemas.Value(**new_value))
         db_values.append(db_value)
-    return db_values
+    crud.create_values(db, db_value_creat)
+    crud.update_values(db, db_value_update)
+    return 1

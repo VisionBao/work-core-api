@@ -53,9 +53,10 @@ def get_keys(page_id: int, skip: int = 0, limit: int = 100, db: Session = Depend
     return crud.get_keys_by_page_id(db, page_id)
 
 
-@router.post('/delete-key', response_model=schemas.Key)
+@router.post('/delete-key')
 def create_key(key: str, db: Session = Depends(get_db)):
     db_key = crud.get_key(db, key)
     if db_key is None:
         raise HTTPException(status_code=400, detail="Key does not exist")
+    crud.delete_value_by_key(db, key)
     return crud.delete_key(db, key)
