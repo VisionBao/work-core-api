@@ -13,28 +13,8 @@ router = APIRouter()
 
 @router.post('/add-project', response_model=schemas.Project)
 def create_project(project: schemas.ProjectCreate, db: Session = Depends(get_db)):
-    db_project = crud.get_project_by_symbol(db, project.symbol)
-    if db_project:
-        raise HTTPException(status_code=400, detail="Project already registered")
-
-    if not utils.check_json_format(project.langs):
-        raise HTTPException(status_code=400, detail="support languages error")
-
-    langs_list = json.loads(project.langs)
-    if not isinstance(langs_list, list):
-        raise HTTPException(status_code=400, detail="support languages not found")
-    langs_list.append(project.lang_default)
-    langs_list = list(set(langs_list))
-
-    for lang in langs_list:
-        if not isinstance(lang, int):
-            raise HTTPException(status_code=400, detail="support languages error")
-        db_language = crud.get_language(db, lang)
-        if db_language is None:
-            raise HTTPException(status_code=400, detail="support language not found")
-
-    project.langs = json.dumps(langs_list)
-
+    project_check(db=db, symbol=project.symbol, lang_default=project.lang_default, langs=project.langs)
+    project.langs = json.dumps(fix_lang(project.lang_default, json.loads(project.langs)))
     return crud.create_project(db, project)
 
 
@@ -59,3 +39,49 @@ def delete_project(project_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Project not found")
     db_status = crud.delete_project(db, project_id)
     return db_status
+
+
+@router.post('/update_project')
+def update_project(project: schemas.Project, db: Session = Depends(get_db)):
+    db_project = crud.get_project_by_symbol(db, project.symbol)
+    if db_project is None or db_project.symbol != project.symbol:
+        raise HTTPException(status_code=400, detail="Project already registered or Symbol error")
+    project_check(db, project_id=project.id,  lang_default=project.lang_default, langs=project.langs)
+    project.langs = json.dumps(fix_lang(project.lang_default, json.loads(project.langs)))
+    return crud.update_project(db, project)
+
+
+def project_check(db: Session, project_id=None, symbol=None, lang_default=None, langs=None):
+    if project_id:
+        db_project = crud.get_project(db, project_id)
+        if db_project is None:
+            raise HTTPException(status_code=404, detail="Project not found")
+
+    if symbol:
+        db_project = crud.get_project_by_symbol(db, symbol)
+        if db_project:
+            raise HTTPException(status_code=400, detail="Project already registered")
+
+    if lang_default and langs:
+        if not utils.check_json_format(langs):
+            raise HTTPException(status_code=400, detail="support languages error")
+
+        langs_list = json.loads(langs)
+        if not isinstance(langs_list, list):
+            raise HTTPException(status_code=400, detail="support languages not found")
+
+        for lang in fix_lang(lang_default, langs_list):
+            if not isinstance(lang, int):
+                raise HTTPException(status_code=400, detail="support languages error")
+            db_language = crud.get_language(db, lang)
+            if db_language is None:
+                raise HTTPException(status_code=400, detail="support language not found")
+
+
+def fix_lang(lang_default: int, langs: list):
+    lang_list = []
+    lang_list.extend(langs)
+    lang_list.append(lang_default)
+    lang_list = list(set(lang_list))
+    lang_list.sort()
+    return lang_list

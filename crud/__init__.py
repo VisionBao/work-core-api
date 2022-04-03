@@ -1,4 +1,5 @@
-from .crud_project import get_project, create_project, get_projects, get_project_by_symbol, delete_project
+from .crud_project import get_project, create_project, get_projects, get_project_by_symbol, delete_project, \
+    update_project
 from .crud_key import get_keys_by_project_id, get_keys_by_page_id, get_keys, create_key, get_key, delete_key
 from .crud_language import get_languages, get_language
 from .crud_page import get_page_by_id, get_pages, delete_page, create_page

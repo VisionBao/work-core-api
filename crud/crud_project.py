@@ -24,7 +24,13 @@ def create_project(db: Session, project: schemas.ProjectCreate):
     return db_project
 
 
-def delete_project(db: Session, project_id: str):
+def delete_project(db: Session, project_id: int):
     db_status = db.query(models.Project).filter(models.Project.id == project_id).delete()
+    db.commit()
+    return db_status
+
+
+def update_project(db: Session, project: schemas.Project):
+    db_status = db.query(models.Project).filter(models.Project.id == project.id).update(project.dict())
     db.commit()
     return db_status
