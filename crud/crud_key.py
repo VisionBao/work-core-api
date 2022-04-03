@@ -33,3 +33,9 @@ def delete_key(db: Session, key: str):
     db_key = db.query(models.Key).filter(models.Key.key == key).delete()
     db.commit()
     return db_key
+
+
+def update_key(db: Session, key: schemas.Key):
+    db_status = db.query(models.Key).filter(models.Key.key == key.key).update(key.dict())
+    db.commit()
+    return db_status
