@@ -8,55 +8,55 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-@router.post('/add-key', response_model=schemas.Key)
+@router.post('/add-key', response_model=schemas.RestfulModel[schemas.Key])
 def create_key(key: schemas.KeyCreate, db: Session = Depends(get_db)):
     check_key(db, key=key.key, project_id=key.project_id, page_id=key.page_id)
-    return crud.create_key(db, key)
+    return schemas.RestfulModel(data=crud.create_key(db, key))
 
 
-@router.get('/get-key', response_model=schemas.Key)
+@router.get('/get-key', response_model=schemas.RestfulModel[schemas.Key])
 def get_key(key: str, db: Session = Depends(get_db)):
-    check_key(db, key=key)
-    return crud.get_key(db, key)
+    check_key(db, key=key, change=True)
+    return schemas.RestfulModel(data=crud.get_key(db, key))
 
 
-@router.get('/get-keys', response_model=list[schemas.Key])
+@router.get('/get-keys', response_model=schemas.RestfulModel[list[schemas.Key]])
 def get_keys(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_keys = crud.get_keys(db, skip, limit)
-    return db_keys
+    return schemas.RestfulModel(data=db_keys)
 
 
-@router.get('/get_keys_by_project_id', response_model=list[schemas.Key])
+@router.get('/get_keys_by_project_id', response_model=schemas.RestfulModel[list[schemas.Key]])
 def get_keys(project_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     check_key(db, project_id=project_id)
-    return crud.get_keys_by_project_id(db, project_id=project_id)
+    return schemas.RestfulModel(data=crud.get_keys_by_project_id(db, project_id=project_id))
 
 
-@router.get('/get_keys_by_page_id', response_model=list[schemas.Key])
+@router.get('/get_keys_by_page_id', response_model=schemas.RestfulModel[list[schemas.Key]])
 def get_keys(page_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     check_key(db, page_id=page_id)
-    return crud.get_keys_by_page_id(db, page_id)
+    return schemas.RestfulModel(data=crud.get_keys_by_page_id(db, page_id))
 
 
-@router.post('/delete-key')
+@router.post('/delete-key', response_model=schemas.RestfulModel)
 def create_key(key: str, db: Session = Depends(get_db)):
-    check_key(db, key=key)
+    check_key(db, key=key, change=True)
     crud.delete_value_by_key(db, key)
-    return crud.delete_key(db, key)
+    return schemas.RestfulModel(data=crud.delete_key(db, key))
 
 
-@router.post('update_key')
+@router.post('update_key', response_model=schemas.RestfulModel)
 def update_key(key: schemas.Key, db: Session = Depends(get_db)):
-    check_key(db, key.key, project_id=key.project_id, page_id=key.page_id, update=True)
-    return crud.update_key(db, key)
+    check_key(db, key.key, project_id=key.project_id, page_id=key.page_id, change=True)
+    return schemas.RestfulModel(data=crud.update_key(db, key))
 
 
-def check_key(db, key=None, project_id=None, page_id=None, update=False):
+def check_key(db, key=None, project_id=None, page_id=None, change=False):
     if key:
         db_key = crud.get_key(db, key)
-        if db_key and bool(1-update):
+        if db_key and bool(1 - change):
             raise HTTPException(status_code=400, detail="Key already registered")
-        if db_key is None and update:
+        if db_key is None and change:
             raise HTTPException(status_code=400, detail="Key not found")
 
     if project_id:

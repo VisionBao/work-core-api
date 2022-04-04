@@ -11,7 +11,7 @@ import utils
 router = APIRouter()
 
 
-@router.post('/add-project', response_model=schemas.Project)
+@router.post('/add-project', response_model=schemas.RestfulModel[schemas.Project])
 def create_project(project: schemas.ProjectCreate, db: Session = Depends(get_db)):
     project_check(db=db,
                   symbol=project.symbol,
@@ -19,30 +19,30 @@ def create_project(project: schemas.ProjectCreate, db: Session = Depends(get_db)
                   langs=project.langs
                   )
     project.langs = json.dumps(fix_lang(project.lang_default, json.loads(project.langs)))
-    return crud.create_project(db, project)
+    return schemas.RestfulModel(data=crud.create_project(db, project))
 
 
-@router.get('/project', response_model=schemas.Project)
+@router.get('/project', response_model=schemas.RestfulModel[schemas.Project])
 def get_project(project_id: int, db: Session = Depends(get_db)):
     project_check(db, project_id=project_id)
     db_project = crud.get_project(db, project_id)
-    return db_project
+    return schemas.RestfulModel(data=db_project)
 
 
-@router.get('/projects', response_model=list[schemas.Project])
+@router.get('/projects', response_model=schemas.RestfulModel[list[schemas.Project]])
 def get_project(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     db_projects = crud.get_projects(db, skip, limit)
-    return db_projects
+    return schemas.RestfulModel(data=db_projects)
 
 
-@router.post('/delete_project')
+@router.post('/delete_project', response_model=schemas.RestfulModel)
 def delete_project(project_id: int, db: Session = Depends(get_db)):
     project_check(db, project_id=project_id)
     db_status = crud.delete_project(db, project_id)
-    return db_status
+    return schemas.RestfulModel(data=db_status)
 
 
-@router.post('/update_project')
+@router.post('/update_project', response_model=schemas.RestfulModel)
 def update_project(project: schemas.Project, db: Session = Depends(get_db)):
     project_check(db,
                   project_id=project.id,
@@ -51,7 +51,7 @@ def update_project(project: schemas.Project, db: Session = Depends(get_db)):
                   langs=project.langs
                   )
     project.langs = json.dumps(fix_lang(project.lang_default, json.loads(project.langs)))
-    return crud.update_project(db, project)
+    return schemas.RestfulModel(data=crud.update_project(db, project))
 
 
 def project_check(db: Session, project_id=None, symbol=None, lang_default=None, langs=None):

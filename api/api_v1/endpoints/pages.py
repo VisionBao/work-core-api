@@ -8,34 +8,34 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-@router.post('/add-page', response_model=schemas.Page)
+@router.post('/add-page', response_model=schemas.RestfulModel[schemas.Page])
 def create_page(page: schemas.PageCreate, db: Session = Depends(get_db)):
     check_page(db, page.name, name_check=True, project_id=page.project_id, pid=page.pid)
-    return crud.create_page(db, page)
+    return schemas.RestfulModel(data=crud.create_page(db, page))
 
 
-@router.get('/get_page', response_model=schemas.Page)
+@router.get('/get_page', response_model=schemas.RestfulModel[schemas.Page])
 def get_page(page_id: int, db: Session = Depends(get_db)):
     check_page(db, page_id=page_id)
-    return crud.get_page_by_id(db, page_id)
+    return schemas.RestfulModel(data=crud.get_page_by_id(db, page_id))
 
 
-@router.get('/get-pages', response_model=list[schemas.Page])
+@router.get('/get-pages', response_model=schemas.RestfulModel[list[schemas.Page]])
 def get_page(project_id: int, db: Session = Depends(get_db)):
     db_pages = crud.get_pages(db, project_id)
-    return db_pages
+    return schemas.RestfulModel(data=db_pages)
 
 
-@router.post('/delete_page')
+@router.post('/delete_page', response_model=schemas.RestfulModel)
 def get_page(page_id: int, db: Session = Depends(get_db)):
     check_page(db, page_id=page_id)
-    return crud.delete_page(db, page_id)
+    return schemas.RestfulModel(data=crud.delete_page(db, page_id))
 
 
-@router.post('/update_page')
+@router.post('/update_page', response_model=schemas.RestfulModel)
 def update_page(page: schemas.Page, db: Session = Depends(get_db)):
     check_page(db, page.name, name_check=True, page_id=page.id, project_id=page.project_id, pid=page.pid)
-    return crud.update_page(db, page)
+    return schemas.RestfulModel(data=crud.update_page(db, page))
 
 
 def check_page(db: Session, name=None, name_check=False, page_id=None, pid=None, project_id=None, file_name=None):

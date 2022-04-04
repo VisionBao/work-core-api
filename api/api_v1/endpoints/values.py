@@ -9,23 +9,23 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-@router.get('/get_values', response_model=list[schemas.Value])
+@router.get('/get_values', response_model=schemas.RestfulModel[list[schemas.Value]])
 def get_values_by_key(key: str, db: Session = Depends(get_db)):
     db_key = crud.get_key(db, key)
     if db_key is None:
         raise HTTPException(status_code=404, detail="key not found")
-    return crud.get_values_by_key(db, key)
+    return schemas.RestfulModel(data=crud.get_values_by_key(db, key))
 
 
-@router.post('/delete_value', response_model=schemas.Value)
+@router.post('/delete_value', response_model=schemas.RestfulModel[schemas.Value])
 def get_values_by_key(key: str, db: Session = Depends(get_db)):
     db_key = crud.get_key(db, key)
     if db_key is None:
         raise HTTPException(status_code=404, detail="key not found")
-    return crud.get_values_by_key(db, key)
+    return schemas.RestfulModel(data=crud.get_values_by_key(db, key))
 
 
-@router.post('/add-values')
+@router.post('/add-values', response_model=schemas.RestfulModel)
 def create_values(values: list[schemas.ValueCreate], db: Session = Depends(get_db)):
     db_value_creat = []
     db_value_update = []
@@ -45,4 +45,4 @@ def create_values(values: list[schemas.ValueCreate], db: Session = Depends(get_d
         db_values.append(db_value)
     crud.create_values(db, db_value_creat)
     crud.update_values(db, db_value_update)
-    return 1
+    return schemas.RestfulModel(data=1)
