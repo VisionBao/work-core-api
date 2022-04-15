@@ -9,12 +9,14 @@ from sqlalchemy.orm import Session
 router = APIRouter()
 
 
-@router.get('/get_values', response_model=schemas.RestfulModel[list[schemas.Value]])
+@router.get('/get_values', response_model=schemas.RestfulModel[schemas.ListModel])
 def get_values_by_key(key: str, db: Session = Depends(get_db)):
     db_key = crud.get_key(db, key)
     if db_key is None:
         raise HTTPException(status_code=404, detail="key not found")
-    return schemas.RestfulModel(data=crud.get_values_by_key(db, key))
+    return schemas.RestfulModel(data=schemas.ListModel(list=crud.get_values_by_key(db, key),
+                                                       total=len(crud.get_values_by_key(db, key))
+                                                       ))
 
 
 @router.post('/delete_value', response_model=schemas.RestfulModel[schemas.Value])

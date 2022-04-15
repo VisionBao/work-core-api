@@ -12,8 +12,10 @@ def get_project_by_symbol(db: Session, project_symbol: str):
     return db.query(models.Project).filter(models.Project.symbol == project_symbol).first()
 
 
-def get_projects(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Project).offset(skip).limit(limit).all()
+def get_projects(db: Session, current: int = None, limit: int = None):
+    if current:
+        return db.query(models.Project).offset(current).limit(limit).all()
+    return db.query(models.Project).all()
 
 
 def create_project(db: Session, project: schemas.ProjectCreate):

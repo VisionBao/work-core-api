@@ -17,8 +17,8 @@ def get_key(db: Session, key: str):
     return db_key
 
 
-def get_keys(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Key).offset(skip).limit(limit).all()
+def get_keys(db: Session, current: int = 0, limit: int = 100):
+    return db.query(models.Key).offset(current).limit(limit).all()
 
 
 def get_keys_by_project_id(db: Session, project_id: int):

@@ -20,22 +20,36 @@ def get_key(key: str, db: Session = Depends(get_db)):
     return schemas.RestfulModel(data=crud.get_key(db, key))
 
 
-@router.get('/get-keys', response_model=schemas.RestfulModel[list[schemas.Key]])
-def get_keys(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    db_keys = crud.get_keys(db, skip, limit)
-    return schemas.RestfulModel(data=db_keys)
+@router.get('/get-keys', response_model=schemas.RestfulModel[schemas.ListModel])
+def get_keys(current: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_keys = crud.get_keys(db, (current - 1) * limit, limit)
+    return schemas.RestfulModel(data=schemas.ListModel(list=db_keys,
+                                                       current=current,
+                                                       pageSize=limit,
+                                                       total=len(db_keys)
+                                                       ))
 
 
-@router.get('/get_keys_by_project_id', response_model=schemas.RestfulModel[list[schemas.Key]])
-def get_keys(project_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+@router.get('/get_keys_by_project_id', response_model=schemas.RestfulModel[schemas.ListModel])
+def get_keys(project_id: int, current: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     check_key(db, project_id=project_id)
-    return schemas.RestfulModel(data=crud.get_keys_by_project_id(db, project_id=project_id))
+    db_keys = crud.get_keys_by_project_id(db, project_id=project_id)
+    return schemas.RestfulModel(data=schemas.ListModel(list=db_keys,
+                                                       current=current,
+                                                       pageSize=limit,
+                                                       total=len(db_keys)
+                                                       ))
 
 
-@router.get('/get_keys_by_page_id', response_model=schemas.RestfulModel[list[schemas.Key]])
-def get_keys(page_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+@router.get('/get_keys_by_page_id', response_model=schemas.RestfulModel[schemas.ListModel])
+def get_keys(page_id: int, current: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     check_key(db, page_id=page_id)
-    return schemas.RestfulModel(data=crud.get_keys_by_page_id(db, page_id))
+    db_keys = crud.get_keys_by_page_id(db, page_id)
+    return schemas.RestfulModel(data=schemas.ListModel(list=db_keys,
+                                                       current=current,
+                                                       pageSize=limit,
+                                                       total=len(db_keys)
+                                                       ))
 
 
 @router.post('/delete-key', response_model=schemas.RestfulModel)

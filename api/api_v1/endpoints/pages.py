@@ -20,10 +20,12 @@ def get_page(page_id: int, db: Session = Depends(get_db)):
     return schemas.RestfulModel(data=crud.get_page_by_id(db, page_id))
 
 
-@router.get('/get-pages', response_model=schemas.RestfulModel[list[schemas.Page]])
+@router.get('/get-pages', response_model=schemas.RestfulModel[schemas.ListModel])
 def get_page(project_id: int, db: Session = Depends(get_db)):
     db_pages = crud.get_pages(db, project_id)
-    return schemas.RestfulModel(data=db_pages)
+    return schemas.RestfulModel(data=schemas.ListModel(list=db_pages,
+                                                       total=len(db_pages)
+                                                       ))
 
 
 @router.post('/delete_page', response_model=schemas.RestfulModel)

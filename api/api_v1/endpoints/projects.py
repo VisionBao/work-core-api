@@ -29,10 +29,17 @@ def get_project(project_id: int, db: Session = Depends(get_db)):
     return schemas.RestfulModel(data=db_project)
 
 
-@router.get('/projects', response_model=schemas.RestfulModel[list[schemas.Project]])
-def get_project(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    db_projects = crud.get_projects(db, skip, limit)
-    return schemas.RestfulModel(data=db_projects)
+@router.get('/projects', response_model=schemas.RestfulModel[schemas.ListModel])
+def get_project(current: int = None, limit: int = None, db: Session = Depends(get_db)):
+    db_projects = crud.get_projects(db, (current - 1) * limit, limit)
+    db_all_projects = crud.get_projects(db)
+    return schemas.RestfulModel(
+        data=schemas.ListModel(list=db_projects,
+                               current=current,
+                               pageSize=limit,
+                               total=len(db_all_projects)
+                               )
+    )
 
 
 @router.post('/delete_project', response_model=schemas.RestfulModel)
