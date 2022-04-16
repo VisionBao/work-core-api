@@ -18,7 +18,9 @@ def create_project(project: schemas.ProjectCreate, db: Session = Depends(get_db)
                   lang_default=project.lang_default,
                   langs=project.langs
                   )
-    project.langs = json.dumps(fix_lang(project.lang_default, json.loads(project.langs)))
+    if project.langs is None:
+        project.langs = "[]"
+        project.langs = json.dumps(fix_lang(project.lang_default, json.loads(project.langs)))
     return schemas.RestfulModel(data=crud.create_project(db, project))
 
 
