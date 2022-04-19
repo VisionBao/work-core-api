@@ -1,5 +1,6 @@
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 from db.database import Base
+import datetime
 
 
 class Project(Base):
@@ -11,3 +12,5 @@ class Project(Base):
     lang_default = Column(Integer, nullable=False)
     langs = Column(String(255))
     content = Column(String(255))
+    create_date = Column(DateTime, default=datetime.datetime.now)
+    last_modified = Column(DateTime, onupdate=datetime.datetime.now)
