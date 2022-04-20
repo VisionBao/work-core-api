@@ -1,12 +1,12 @@
 import json
 
-from api.deps import get_db
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
 import crud
 import schemas
-from sqlalchemy.orm import Session
 import utils
+from api.deps import get_db
 
 router = APIRouter()
 

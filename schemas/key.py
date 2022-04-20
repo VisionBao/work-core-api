@@ -13,6 +13,8 @@ class KeyCreate(KeyBase):
 
 
 class Key(KeyBase):
+    create_date: str
+    last_modified: str
 
     class Config:
         orm_mode = True

@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from api.api_v1.endpoints import keys, languages, pages, projects, values
+from api.api_v1.endpoints import keys, languages, pages, projects, values, folders
 
 api_router = APIRouter()
 
@@ -9,4 +9,4 @@ api_router.include_router(languages.router, prefix="/languages", tags=["language
 api_router.include_router(pages.router, prefix="/pages", tags=["pages"])
 api_router.include_router(projects.router, prefix="/projects", tags=["projects"])
 api_router.include_router(values.router, prefix="/values", tags=["values"])
-
+api_router.include_router(folders.router, prefix="/folders", tags=["folders"])

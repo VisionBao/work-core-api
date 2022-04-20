@@ -1,19 +1,17 @@
 from pydantic import BaseModel
 from typing import Optional
 
-
-class PageBase(BaseModel):
-    folder_id: int
+class FolderBase(BaseModel):
     project_id: int
     name: str
-    file_name: Optional[str] = None
 
 
-class PageCreate(PageBase):
+class FolderCreate(FolderBase):
+    f_project_id: Optional[int] = 0
     pass
 
 
-class Page(PageBase):
+class Folder(FolderBase):
     id: int
     create_date: str
     last_modified: str

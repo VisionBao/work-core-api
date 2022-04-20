@@ -1,14 +1,15 @@
-from sqlalchemy import Boolean, Column, Integer, String, DateTime
-from db.database import Base
+
 import datetime
 
+from sqlalchemy import Column, Integer, String, DateTime
 
-class Page(Base):
-    __tablename__ = "pages"
+from db.database import Base
+
+
+class Folder(Base):
+    __tablename__ = "folder"
     id = Column(Integer, primary_key=True, index=True)
-    folder_id = Column(Integer, nullable=False)
     project_id = Column(Integer, nullable=False)
     name = Column(String(255), nullable=False)
-    file_name = Column(String(255))
     create_date = Column(DateTime, default=datetime.datetime.now)
     last_modified = Column(DateTime, onupdate=datetime.datetime.now)

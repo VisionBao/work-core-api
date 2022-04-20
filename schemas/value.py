@@ -14,6 +14,8 @@ class ValueCreate(ValueBase):
 
 class Value(ValueBase):
     id: int
+    create_date: str
+    last_modified: str
 
     class Config:
         orm_mode = True

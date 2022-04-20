@@ -17,6 +17,8 @@ class ProjectCreate(ProjectBase):
 
 class Project(ProjectBase):
     id: int
+    create_date: str
+    last_modified: str
 
     class Config:
         orm_mode = True

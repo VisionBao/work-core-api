@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import Optional
 
 
 class LanguageBase(BaseModel):
@@ -14,6 +13,8 @@ class LanguageCreate(LanguageBase):
 
 class Language(LanguageBase):
     id: int
+    create_date: str
+    last_modified: str
 
     class Config:
         orm_mode = True

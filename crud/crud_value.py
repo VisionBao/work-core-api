@@ -6,8 +6,8 @@ import models
 import schemas
 
 
-def create_value(db: Session, project: schemas.ValueCreate):
-    db_value = models.Project(**project.dict())
+def create_value(db: Session, value: schemas.ValueCreate):
+    db_value = models.Value(**value.dict())
     db.add(db_value)
     db.commit()
     db.refresh(db_value)
